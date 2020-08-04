@@ -1,17 +1,28 @@
 version: 2.1
+
 orbs:
   architect: giantswarm/architect@0.10.0
 
 workflows:
-  package-and-push-chart-on-tag:
+  build:
     jobs:
-      - architect/push-to-app-catalog:
-          context: "architect"
-          name: "package and push k8s-jwt-to-vault-token chart"
-          app_catalog: "control-plane-catalog"
-          app_catalog_test: "control-plane-test-catalog"
-          chart: "k8s-jwt-to-vault-token"
-          # Trigger job on git tag.
+      - architect/push-to-docker:
+          name: push-k8s-jwt-to-vault-token-to-quay
+          image: "quay.io/giantswarm/k8s-jwt-to-vault-token"
+          username_envar: "QUAY_USERNAME"
+          password_envar: "QUAY_PASSWORD"
+          # Needed to trigger job also on git tag.
           filters:
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-docker:
+          name: push-k8s-jwt-to-vault-token-to-aliyun
+          image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/k8s-jwt-to-vault-token"
+          username_envar: "ALIYUN_USERNAME"
+          password_envar: "ALIYUN_PASSWORD"
+          filters:
+            branches:
+              only: master
             tags:
               only: /^v.*/
