@@ -7,4 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add github automation workflows.
+
 [Unreleased]: https://github.com/giantswarm/k8s-jwt-to-vault-token/tree/master
