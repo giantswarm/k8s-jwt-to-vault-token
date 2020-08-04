@@ -7,10 +7,10 @@ workflows:
     jobs:
       - architect/push-to-app-catalog:
           context: "architect"
-          name: "package and push {CHART-NAME} chart"
-          app_catalog: "giantswarm-playground-catalog"
-          app_catalog_test: "giantswarm-playground-test-catalog"
-          chart: "{CHART-NAME}"
+          name: "package and push k8s-jwt-to-vault-token chart"
+          app_catalog: "control-plane-catalog"
+          app_catalog_test: "control-plane-test-catalog"
+          chart: "k8s-jwt-to-vault-token"
           # Trigger job on git tag.
           filters:
             tags:
