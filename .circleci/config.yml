@@ -6,18 +6,11 @@ orbs:
 workflows:
   build:
     jobs:
-      - build:
-          filters:
-            tags:
-              only: /^v.*/
-
       - architect/push-to-docker:
           name: push-k8s-jwt-to-vault-token-to-quay
           image: "quay.io/giantswarm/k8s-jwt-to-vault-token"
           username_envar: "QUAY_USERNAME"
           password_envar: "QUAY_PASSWORD"
-          requires:
-            - build
           # Needed to trigger job also on git tag.
           filters:
             tags:
@@ -28,8 +21,6 @@ workflows:
           image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/k8s-jwt-to-vault-token"
           username_envar: "ALIYUN_USERNAME"
           password_envar: "ALIYUN_PASSWORD"
-          requires:
-            - build
           filters:
             branches:
               only: master
