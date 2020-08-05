@@ -143,7 +143,7 @@ func vaultLogin(jwt, role, vaultAddr string) (string, error) {
 		return "", microerror.Mask(err)
 	}
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // nolint
 	}
 	client := &http.Client{Transport: tr}
 
