@@ -5,6 +5,6 @@ RUN apk update \
   && apk add jq \
   && rm -rf /var/cache/apk/*
 
-COPY entrypoint.sh /entrypoint.sh
+COPY k8s-jwt-to-vault-token /k8s-jwt-to-vault-token
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/k8s-jwt-to-vault-token"]
