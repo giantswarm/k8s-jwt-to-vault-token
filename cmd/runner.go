@@ -104,21 +104,28 @@ func ensureVaultTokenSecretExist(clientSet *kubernetes.Clientset, vaultToken, va
 
 	_, err := clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Get(vaultTokenSecretName, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
+		fmt.Printf("Creating secret %#q for vault token...\n", vaultTokenSecretName)
 		_, err = clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Create(secret)
 		if err != nil {
 			return microerror.Mask(err)
 		}
+		fmt.Printf("Secret %#q for vault token has been created.\n", vaultTokenSecretName)
+
 	} else {
+		fmt.Printf("Updating secret %#q for vault token...\n", vaultTokenSecretName)
 		_, err = clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Update(secret)
 		if err != nil {
 			return microerror.Mask(err)
 		}
+		fmt.Printf("Secret %#q for vault token has been updated.\n", vaultTokenSecretName)
 	}
 
 	return nil
 }
 
 func readJWTFromFile(filepath string) (string, error) {
+	fmt.Printf("Reading service account JWT from file %#q ...\n", filepath)
+
 	jwt, err := ioutil.ReadFile(filepath)
 
 	if err != nil {
@@ -129,6 +136,7 @@ func readJWTFromFile(filepath string) (string, error) {
 }
 
 func vaultLogin(jwt, role, vaultAddr string) (string, error) {
+	fmt.Printf("Logging into vault Kubernetes backend...\n")
 
 	url := fmt.Sprintf("%s/%s", vaultAddr, vaultAuthEndpoint)
 	values := map[string]string{"jwt": jwt, "role": role}
@@ -150,6 +158,9 @@ func vaultLogin(jwt, role, vaultAddr string) (string, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", microerror.Mask(err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", microerror.Maskf(executionFailedError, "expected code %#q got %#q", http.StatusOK, resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
