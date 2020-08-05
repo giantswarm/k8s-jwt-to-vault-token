@@ -11,5 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add github automation workflows.
 - Add `Dockerfile`.
+- Add code.
 
 [Unreleased]: https://github.com/giantswarm/k8s-jwt-to-vault-token/tree/master
