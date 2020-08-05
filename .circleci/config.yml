@@ -8,7 +8,7 @@ workflows:
     jobs:
       - architect/go-build:
           name: go-build
-          binary: crsync
+          binary: k8s-jwt-to-vault-token
           filters:
             tags:
               only: /^v.*/
