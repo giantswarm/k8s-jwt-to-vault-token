@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -50,10 +51,22 @@ func (r *runner) Run(cmd *cobra.Command, args []string) error {
 }
 
 func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) error {
-	err := cmd.Help()
+	jwt, err := readJWTFromFile(jwtFilePath)
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
+	fmt.Printf("Token: %s", string(jwt))
+
 	return nil
+}
+
+func readJWTFromFile(filepath string) ([]byte, error) {
+	jwt, err := ioutil.ReadFile(filepath)
+
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
+	return jwt, nil
 }
