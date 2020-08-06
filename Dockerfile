@@ -1,10 +1,7 @@
-FROM quay.io/giantswarm/docker-kubectl:1.18.2
+FROM alpine:3.12
 
-RUN apk update \
-  && apk upgrade \
-  && apk add jq \
-  && rm -rf /var/cache/apk/*
+RUN apk add --no-cache ca-certificates
 
-COPY entrypoint.sh /entrypoint.sh
+ADD ./k8s-jwt-to-vault-token /k8s-jwt-to-vault-token
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/k8s-jwt-to-vault-token"]
