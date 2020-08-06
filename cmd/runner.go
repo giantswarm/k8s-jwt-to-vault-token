@@ -65,6 +65,9 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	if err != nil {
 		return microerror.Mask(err)
 	}
+	if vaultToken == "" {
+		return microerror.Maskf(executionFailedError, "vault token must not be empty")
+	}
 
 	config, err := rest.InClusterConfig()
 	if err != nil {
