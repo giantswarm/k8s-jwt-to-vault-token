@@ -5,7 +5,7 @@ var (
 	gitSHA      = "n/a"
 	name        = "k8s-jwt-to-vault-token"
 	source      = "https://github.com/giantswarm/k8s-jwt-to-vault-token"
-	version     = "0.1.0-dev"
+	version     = "0.1.0"
 )
 
 func Description() string {
