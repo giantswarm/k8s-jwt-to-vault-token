@@ -166,7 +166,7 @@ func vaultLogin(jwt, role, vaultAddr string) (string, error) {
 			return "", microerror.Mask(err)
 		}
 
-		return "", microerror.Maskf(executionFailedError, "expected code %#q got %#q: %#q", http.StatusOK, resp.StatusCode, string(body))
+		return "", microerror.Maskf(executionFailedError, "expected code %d got %d: %#q", http.StatusOK, resp.StatusCode, string(body))
 	}
 	defer resp.Body.Close()
 
