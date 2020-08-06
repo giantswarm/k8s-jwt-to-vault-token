@@ -23,11 +23,6 @@ import (
 	"github.com/giantswarm/k8s-jwt-to-vault-token/pkg/project"
 )
 
-const (
-	jwtFilePath       = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-	vaultAuthEndpoint = "v1/auth/kubernetes/login"
-)
-
 type runner struct {
 	flag   *flag
 	logger micrologger.Logger
@@ -61,12 +56,12 @@ func (r *runner) Run(cmd *cobra.Command, args []string) error {
 }
 
 func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) error {
-	jwt, err := readJWTFromFile(jwtFilePath)
+	jwt, err := readJWT()
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
-	vaultToken, err := vaultLogin(jwt, r.flag.VaultPolicy, r.flag.VaultAddr)
+	vaultToken, err := vaultLogin(jwt, r.flag.VaultRole, r.flag.VaultAddr)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -123,10 +118,12 @@ func ensureVaultTokenSecretExist(clientSet *kubernetes.Clientset, vaultToken, va
 	return nil
 }
 
-func readJWTFromFile(filepath string) (string, error) {
-	fmt.Printf("Reading service account JWT from file %#q ...\n", filepath)
+func readJWT() (string, error) {
+	jwtFilePath := "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
-	jwt, err := ioutil.ReadFile(filepath)
+	fmt.Printf("Reading service account JWT from file %#q ...\n", jwtFilePath)
+
+	jwt, err := ioutil.ReadFile(jwtFilePath)
 
 	if err != nil {
 		return "", microerror.Mask(err)
@@ -138,6 +135,7 @@ func readJWTFromFile(filepath string) (string, error) {
 func vaultLogin(jwt, role, vaultAddr string) (string, error) {
 	fmt.Printf("Logging into vault Kubernetes backend...\n")
 
+	vaultAuthEndpoint := "v1/auth/kubernetes/login"
 	url := fmt.Sprintf("%s/%s", vaultAddr, vaultAuthEndpoint)
 	values := map[string]string{"jwt": jwt, "role": role}
 
