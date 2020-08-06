@@ -158,7 +158,12 @@ func vaultLogin(jwt, role, vaultAddr string) (string, error) {
 		return "", microerror.Mask(err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return "", microerror.Maskf(executionFailedError, "expected code %#q got %#q", http.StatusOK, resp.StatusCode)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return "", microerror.Mask(err)
+		}
+
+		return "", microerror.Maskf(executionFailedError, "expected code %#q got %#q: %#q", http.StatusOK, resp.StatusCode, string(body))
 	}
 	defer resp.Body.Close()
 
