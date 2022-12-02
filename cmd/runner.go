@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -127,7 +127,7 @@ func readJWT() (string, error) {
 
 	fmt.Printf("Reading service account JWT from file %#q ...\n", jwtFilePath)
 
-	jwt, err := ioutil.ReadFile(jwtFilePath)
+	jwt, err := os.ReadFile(jwtFilePath)
 
 	if err != nil {
 		return "", microerror.Mask(err)
@@ -162,7 +162,7 @@ func vaultLogin(jwt, role, vaultAddr string) (string, error) {
 		return "", microerror.Mask(err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return "", microerror.Mask(err)
 		}
@@ -178,7 +178,7 @@ func vaultLogin(jwt, role, vaultAddr string) (string, error) {
 	}
 
 	var tokenData responseData
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", microerror.Mask(err)
 	}

@@ -1,6 +1,6 @@
 module github.com/giantswarm/k8s-jwt-to-vault-token
 
-go 1.19
+go 1.18
 
 require (
 	github.com/giantswarm/microerror v0.4.0
