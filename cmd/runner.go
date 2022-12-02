@@ -56,6 +56,7 @@ func (r *runner) Run(cmd *cobra.Command, args []string) error {
 }
 
 func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) error {
+
 	jwt, err := readJWT()
 	if err != nil {
 		return microerror.Mask(err)
@@ -78,7 +79,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 		return microerror.Mask(err)
 	}
 
-	err = ensureVaultTokenSecretExist(clientSet, vaultToken, r.flag.VaultTokenSecretName, r.flag.VaultTokenSecretNamespace)
+	err = ensureVaultTokenSecretExist(ctx, clientSet, vaultToken, r.flag.VaultTokenSecretName, r.flag.VaultTokenSecretNamespace)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -86,7 +87,7 @@ func (r *runner) run(ctx context.Context, cmd *cobra.Command, args []string) err
 	return nil
 }
 
-func ensureVaultTokenSecretExist(clientSet *kubernetes.Clientset, vaultToken, vaultTokenSecretName, vaultTokenSecretNamespace string) error {
+func ensureVaultTokenSecretExist(ctx context.Context, clientSet *kubernetes.Clientset, vaultToken, vaultTokenSecretName, vaultTokenSecretNamespace string) error {
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      vaultTokenSecretName,
@@ -100,10 +101,10 @@ func ensureVaultTokenSecretExist(clientSet *kubernetes.Clientset, vaultToken, va
 		},
 	}
 
-	_, err := clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Get(vaultTokenSecretName, metav1.GetOptions{})
+	_, err := clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Get(ctx, vaultTokenSecretName, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
 		fmt.Printf("Creating secret %#q for vault token...\n", vaultTokenSecretName)
-		_, err = clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Create(secret)
+		_, err = clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Create(ctx, secret, metav1.CreateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -111,7 +112,7 @@ func ensureVaultTokenSecretExist(clientSet *kubernetes.Clientset, vaultToken, va
 
 	} else {
 		fmt.Printf("Updating secret %#q for vault token...\n", vaultTokenSecretName)
-		_, err = clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Update(secret)
+		_, err = clientSet.CoreV1().Secrets(vaultTokenSecretNamespace).Update(ctx, secret, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
