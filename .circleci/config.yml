@@ -28,7 +28,7 @@ workflows:
       - architect/push-to-docker:
           context: architect
           name: push-k8s-jwt-to-vault-token-to-aliyun
-          image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/k8s-jwt-to-vault-token"
+          image: "giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/k8s-jwt-to-vault-token"
           username_envar: "ALIYUN_USERNAME"
           password_envar: "ALIYUN_PASSWORD"
           requires:
