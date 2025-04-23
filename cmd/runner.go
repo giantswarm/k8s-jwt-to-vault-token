@@ -169,7 +169,7 @@ func vaultLogin(jwt, role, vaultAddr string) (string, error) {
 
 		return "", microerror.Maskf(executionFailedError, "expected code %#q got %#q: %#q", http.StatusOK, resp.StatusCode, string(body))
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	type responseData struct {
 		Auth struct {
